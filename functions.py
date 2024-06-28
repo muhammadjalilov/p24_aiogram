@@ -23,3 +23,16 @@ async def get_info(message: Message, bot: Bot, state: FSMContext):
     else:
         await message.answer(data, parse_mode="HTML")
     pprint(data)
+
+
+async def start_answer(message: Message, bot: Bot):
+    await bot.send_message(message.from_user.id,
+                           text=f"Hello {message.from_user.mention_html(f'{message.from_user.first_name}')}",
+                           parse_mode="HTML")
+
+
+async def help_answer(message: Message, bot: Bot):
+    await bot.send_message(message.from_user.id,
+                           text="""
+                                /start -> Start bot\n/help -> Commands
+                           """)
