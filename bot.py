@@ -5,12 +5,13 @@ from aiogram.filters import Command
 from aiogram.types import BotCommand, Message
 from dotenv import load_dotenv
 
+from filters import CheckSubFilter
 from functions import start, info, stop, vacancy, helps, start_menu, register_name, register_phone, register_address, \
     register_position, register_finish, register_age, register_technology, register_require_time, register_salary, \
-    stop_command_answer
+    stop_command_answer, share_data, share_contact, share_location, query_callback, check_sub_channel
 from states import SignUp
 
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, F
 
 load_dotenv()
 
@@ -26,13 +27,19 @@ async def main(dp) -> None:
             BotCommand(command="/start", description="Bot ni ishga tushirish"),
             BotCommand(command="/info", description="Shaxsiy ma'lumotlarni olish"),
             BotCommand(command="/vacancy", description="Ishga e'lon berish"),
+            BotCommand(command="/share", description="Malumot yuborish"),
             BotCommand(command="/stop", description="Yuborilayotgan arizani bekor qilish!"),
             BotCommand(command="/help", description="Yordam")
         ]
     )
     dp.startup.register(start)
     dp.message.register(vacancy, Command('vacancy'))
+    dp.message.register(share_data, Command('share'))
     dp.message.register(stop_command_answer, Command('stop'))
+    dp.callback_query.register(query_callback, F.data == "check_subscription")
+    dp.message.register(check_sub_channel, CheckSubFilter())
+    dp.message.register(share_contact, F.contact)
+    dp.message.register(share_location, F.location)
     dp.message.register(register_name, SignUp.name)
     dp.message.register(register_age, SignUp.age)
     dp.message.register(register_technology, SignUp.technology)

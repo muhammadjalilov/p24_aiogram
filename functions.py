@@ -2,8 +2,9 @@ from pprint import pprint
 
 from aiogram import Bot
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
+from keyboards import contact_location_button, channel_list
 from states import SignUp
 
 
@@ -31,6 +32,7 @@ async def helps(message: Message, bot: Bot, state: FSMContext):
     await message.answer("""
 /start -> Botni ishga tushirish    
 /help -> Commandlarni ko'rish    
+/share --> Malumotlarni yuborish
 /vacancy -> E'lon berish    
 /stop --> Yuborilayotgan arizani bekor qilish
     """)
@@ -159,3 +161,27 @@ async def stop_command_answer(message: Message, bot: Bot, state: FSMContext):
     else:
         await message.answer('Arizangiz bekor qilindi!')
         await state.clear()
+
+
+async def share_data(message: Message, bot: Bot, state: FSMContext):
+    await message.answer("Tugmalardan birini tanlang:", reply_markup=contact_location_button)
+
+
+async def share_contact(message: Message, bot: Bot, state: FSMContext):
+    await message.answer("Kontakt qabul qilindi. Tez orada siz bilan bog'lanamiz!")
+    await bot.send_contact(chat_id="779534487", first_name=message.contact.first_name,
+                           phone_number=message.contact.phone_number)
+
+
+async def share_location(message: Message, bot: Bot, state: FSMContext):
+    await message.answer("Qabul qilindi!Kuryer siz bilan bog'lanadi!")
+    await bot.send_location(chat_id="779534487", latitude=message.location.latitude,
+                            longitude=message.location.longitude)
+
+
+async def check_sub_channel(message: Message, bot: Bot):
+    await message.answer("Botdan foydalanish uchun quyidagi kanalga a'zo bo'ling!", reply_markup=channel_list)
+
+
+async def query_callback(query: CallbackQuery):
+    await query.answer("Kanalga ulanganingizdan mumnunmiz", show_alert=True)
