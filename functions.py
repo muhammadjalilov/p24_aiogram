@@ -32,7 +32,7 @@ async def helps(message: Message, bot: Bot, state: FSMContext):
 /start -> Botni ishga tushirish    
 /help -> Commandlarni ko'rish    
 /vacancy -> E'lon berish    
-
+/stop --> Yuborilayotgan arizani bekor qilish
     """)
 
 
@@ -135,8 +135,8 @@ async def hashtag(data_):
     hashtags = f"#xodim "
     data_technology_str = data_.get("technology")
     for i in data_technology_str.split(','):
-        hashtags += '#'+i.lower().strip()+' '
-    hashtags += '#'+data_.get("address")
+        hashtags += '#' + i.lower().strip() + ' '
+    hashtags += '#' + data_.get("address")
     return hashtags
 
 
@@ -150,3 +150,12 @@ async def start(bot: Bot):
 
 async def stop(bot: Bot):
     await bot.send_message(chat_id="779534487", text="Bot To'xtadi ⚠️")
+
+
+async def stop_command_answer(message: Message, bot: Bot, state: FSMContext):
+    this_state = await state.get_state()
+    if this_state is None:
+        await message.answer('Siz xech qanday ariza yubormagansiz!')
+    else:
+        await message.answer('Arizangiz bekor qilindi!')
+        await state.clear()
